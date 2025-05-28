@@ -1,17 +1,17 @@
-# simulate_dns_beacon.ps1
-Write-Host "[*] Simulating Cobalt Strike-style DNS beaconing..."
+Write-Host "[*] Simulating Cobalt Strike-style DNS beaconing with TXT queries..."
 
-$domain = "examplec2.test"  # Replace with your test domain or keep as dummy
-$count = 10
+$domain = "c2beacon.local"  # Use internal test domain or mimic a C2-style FQDN
+$dnsServer = "192.168.1.1"  # Change to your DNS server IP
+$count = 15
 
 for ($i = 0; $i -lt $count; $i++) {
-    $sub = -join ((65..90) + (97..122) | Get-Random -Count 10 | ForEach-Object {[char]$_})
+    $sub = -join ((48..57)+(65..90)+(97..122) | Get-Random -Count 20 | ForEach-Object {[char]$_})
     $fqdn = "$sub.$domain"
 
-    Write-Host "Querying A record for $fqdn"
-    Resolve-DnsName -Name $fqdn -Type A -Server <Your-DNS-IP> -ErrorAction SilentlyContinue
+    Write-Host "Querying TXT record for $fqdn"
+    Resolve-DnsName -Name $fqdn -Type TXT -Server $dnsServer -ErrorAction SilentlyContinue
 
-    Start-Sleep -Seconds 2
+    Start-Sleep -Seconds 3
 }
 
-Write-Host "[+] Done. Check TXOne logs for Rule ID 3010038."
+Write-Host "[+] Finished beacon simulation. Check for Rule ID 3010038."
